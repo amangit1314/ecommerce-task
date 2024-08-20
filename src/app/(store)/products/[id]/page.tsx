@@ -16,27 +16,57 @@ import { ProductSize } from "@/types/product-size";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "@/zustand/user-store";
 import { useRouter } from "next/navigation";
-import { Sevillana } from "next/font/google";
+import { User } from "@prisma/client";
+import { CartItem } from "@/types/cart-item";
 
 const ProductPage = ({ params }: { params: { id: string } }) => {
   const productId = params?.id!;
   const { productDetails, fetchProductDetails, loading, error } =
     useProductStore();
+  const { addToCart, loading: cartLoading, error: cartError } = useCartStore();
+  const {
+    user,
+    loading: userLoading,
+    error: userError,
+    isAuthenticated,
+    placeOrder,
+  } = useUserStore();
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null); // Initialize with null
+  const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null);
 
   useEffect(() => {
     fetchProductDetails(productId);
   }, [productId, fetchProductDetails]);
 
-  if (loading) {
-    <div className="text-red-500 font-semibold text-base"> Loading ⏳ ...</div>;
+  if (loading || userLoading || cartLoading) {
+    return (
+      <div className="text-yellow-500 font-semibold text-base">
+        Loading Product Details⏳ ...
+      </div>
+    );
   }
 
+  // Custom error handling for different errors
   if (error) {
     return (
       <div className="text-red-500 font-semibold text-base">
-        `Error: {error}`
+        Error loading product details: {error}
+      </div>
+    );
+  }
+
+  if (userError) {
+    return (
+      <div className="text-red-500 font-semibold text-base">
+        Error loading user details: {userError}
+      </div>
+    );
+  }
+
+  if (cartError) {
+    return (
+      <div className="text-red-500 font-semibold text-base">
+        Error adding to cart: {cartError}
       </div>
     );
   }
@@ -51,10 +81,11 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  // Now that product exists, update the selectedSize state
+  // Set selectedSize to the first available size if not already set
   if (!selectedSize) {
     setSelectedSize(product.sizes[0]);
   }
+
   return (
     <div className="bg-white">
       <div className="px-8">
@@ -191,12 +222,16 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
                 <AddToCartButton
                   product={product}
                   selectedSize={selectedSize ?? product.sizes[0]}
+                  addToCart={addToCart}
+                  user={user!}
+                  loading={loading || userLoading || cartLoading}
                 />
 
                 {/* Checkout button  */}
                 <CheckoutButton
                   product={product}
                   selectedSize={selectedSize ?? product.sizes[0]}
+                  isAuthenticated={isAuthenticated}
                 />
               </form>
             </div>
@@ -293,13 +328,16 @@ const ProductSizes = ({
 const AddToCartButton = ({
   product,
   selectedSize,
+  addToCart,
+  user,
+  loading,
 }: {
   product: Product;
   selectedSize: ProductSize;
+  addToCart: (newCartItem: CartItem) => void;
+  user: User;
+  loading: boolean;
 }) => {
-  const { addToCart, loading: cartLoading } = useCartStore();
-  const { user, loading: userLoading, error: userError } = useUserStore();
-
   const cartItem = {
     cartItemId: uuidv4(),
     userId: user?.id!,
@@ -332,12 +370,12 @@ const AddToCartButton = ({
     <button
       type="submit"
       onClick={handleAddToCart}
-      // disabled={cartLoading || userLoading || !selectedSize}
+      disabled={loading || !selectedSize}
       className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed"
     >
       <ShoppingCart size={22} className="mr-2" />
       Add to cart
-      {/* {cartLoading || userLoading ? "Adding..." : "Add to cart"} */}
+      {loading ? "Loading..." : "Add to cart"}
     </button>
   );
 };
@@ -345,11 +383,12 @@ const AddToCartButton = ({
 const CheckoutButton = ({
   product,
   selectedSize,
+  isAuthenticated,
 }: {
   product: Product;
   selectedSize: ProductSize;
+  isAuthenticated: boolean;
 }) => {
-  const { isAuthenticated, user, placeOrder } = useUserStore();
   const router = useRouter();
 
   const onClick = () => {

@@ -286,10 +286,11 @@ export default function Home() {
   }, [fetchProducts]);
 
   if (loading) {
-    <div className="text-yellow-500 font-semibold text-base">
-      {" "}
-      Loading ⏳ ...
-    </div>;
+    return (
+      <div className="text-yellow-500 font-semibold text-base">
+        Loading ⏳ ...
+      </div>
+    );
   }
 
   if (error) {
@@ -302,34 +303,23 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between space-y-10 px-12 pb-12">
-      {/* header */}
       <Header />
 
       <div className="space-y-5 max-w-screen w-full">
-        {/* <div className={abrilFatface.className}>
-          <h1 className="text-4xl font-bold">Ecommerce Products</h1>
-        </div> */}
-
         <h1 className="text-4xl font-extrabold tracking-tighter">Store</h1>
 
         <p className="text-base w-7/12">
-          {/* Explore our curated selection of top-quality products across
-          categories. Whether you&apos;re looking for the latest trends,
-          timeless classics, or innovative solutions, we have something for
-          everyone.  */}
           Browse through our collections to find exactly what you need, all in
           one place. Shop now and enjoy exclusive deals and discounts!
         </p>
       </div>
 
       <div className="grid grid-cols-5 gap-4 max-w-screen w-full mx-15">
-        {products.map((product: any) => {
-          return (
-            <div key={product.id}>
-              <ProductCard2 product={product} />
-            </div>
-          );
-        })}
+        {products.map((product) => (
+          <div key={product.id}>
+            <ProductCard2 product={product} />
+          </div>
+        ))}
       </div>
     </main>
   );
@@ -368,7 +358,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 const ProductCard2 = ({ product }: { product: Product }) => {
   return (
     <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-      <a href={`/products/${product.id}`}>
+      <Link href={`/products/${product.id}`}>
         <Image
           src={
             product.productImageLink ??
@@ -379,7 +369,7 @@ const ProductCard2 = ({ product }: { product: Product }) => {
           height={220}
           className="h-[10rem] w-[15rem] rounded-t-lg  object-cover dark:brightness-[0.2] dark:grayscale"
         />
-      </a>
+      </Link>
 
       <div className="p-3">
         <Link href={`/products/${product.id}`}>

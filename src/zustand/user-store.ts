@@ -144,7 +144,7 @@ export const useUserStore = create<UserState & UserActions>()(
       fetchUserOrders: async (userId: string) => {
         try {
           set({ loading: true });
-          const response = await fetch("/api/profile/orders", {
+          const response = await fetch("/api/orders/user/${userId}", {
             method: "GET",
             body: JSON.stringify({ userId }),
           });
