@@ -1,0 +1,81 @@
+ {
+      "id": "product_6",
+      "productRating": 4.5,
+      "productName": "Unisex Hoodie",
+      "productDescription": "A cozy and versatile hoodie made from soft fleece material. Features a drawstring hood and front pouch pocket.",
+      "productImageLink": "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcR7NR5P_iInEXkrlcOomh69Awyj49ES7JZcXdZ-_6VYSI1PqL8Znk1b8QJFisF8SjtbgIxz7bYT7gEQ4T3IScYAa5b7h0Rqfd5PJ5zotoMPszc6ocv-ttJ4",
+      "productPrice": 75,
+      "sellerName": "Comfy Wear",
+      "sizes": [
+        { "name": "S", "inStock": true, "availableQuantity": 20 },
+        { "name": "M", "inStock": true, "availableQuantity": 18 },
+        { "name": "L", "inStock": true, "availableQuantity": 10 }
+      ]
+    },
+    {
+      "id": "product_7",
+      "productRating": 4.8,
+      "productName": "Yoga Pants",
+      "productDescription": "Comfortable and stretchy yoga pants ideal for workouts and casual wear. Features a high waistband and moisture-wicking fabric.",
+      "productImageLink": "https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg",
+      "productPrice": 60,
+      "sellerName": "Active Wear",
+      "sizes": [
+        { "name": "XS", "inStock": true, "availableQuantity": 15 },
+        { "name": "S", "inStock": true, "availableQuantity": 20 },
+        { "name": "M", "inStock": true, "availableQuantity": 18 },
+        { "name": "L", "inStock": true, "availableQuantity": 10 }
+      ]
+    },
+    {
+      "id": "product_8",
+      "productRating": 4.7,
+      "productName": "Leather Belt",
+      "productDescription": "A classic leather belt with a sleek buckle design. Perfect for both casual and formal attire.",
+      "productImageLink": "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcR7NR5P_iInEXkrlcOomh69Awyj49ES7JZcXdZ-_6VYSI1PqL8Znk1b8QJFisF8SjtbgIxz7bYT7gEQ4T3IScYAa5b7h0Rqfd5PJ5zotoMPszc6ocv-ttJ4",
+      "productPrice": 35,
+      "sellerName": "Accessories Co.",
+      "sizes": [
+        { "name": "32", "inStock": true, "availableQuantity": 10 },
+        { "name": "34", "inStock": true, "availableQuantity": 15 },
+        { "name": "36", "inStock": true, "availableQuantity": 10 }
+      ]
+    },
+    {
+      "id": "product_9",
+      "productRating": 4.9,
+      "productName": "Fashion Handbag",
+      "productDescription": "A stylish and spacious handbag made from premium materials. Features multiple compartments for easy organization.",
+      "productImageLink": "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcR7NR5P_iInEXkrlcOomh69Awyj49ES7JZcXdZ-_6VYSI1PqL8Znk1b8QJFisF8SjtbgIxz7bYT7gEQ4T3IScYAa5b7h0Rqfd5PJ5zotoMPszc6ocv-ttJ4",
+      "productPrice": 150,
+      "sellerName": "Luxury Bags",
+      "sizes": []
+    },
+    {
+      "id": "product_10",
+      "productRating": 4.7,
+      "productName": "Casual Sneakers",
+      "productDescription": "Stylish and comfortable sneakers for everyday wear. Made from durable materials with a cushioned sole for added comfort.",
+      "productImageLink": "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcR7NR5P_iInEXkrlcOomh69Awyj49ES7JZcXdZ-_6VYSI1PqL8Znk1b8QJFisF8SjtbgIxz7bYT7gEQ4T3IScYAa5b7h0Rqfd5PJ5zotoMPszc6ocv-ttJ4",
+      "productPrice": 100,
+      "sellerName": "Footwear Hub",
+      "sizes": [
+        { "name": "8", "inStock": true, "availableQuantity": 10 },
+        { "name": "9", "inStock": true, "availableQuantity": 8 },
+        { "name": "10", "inStock": true, "availableQuantity": 5 }
+      ]
+    },
+    {
+      "id": "product_11",
+      "productRating": 4.6,
+      "productName": "Kids' Cartoon T-Shirt",
+      "productDescription": "A fun and vibrant t-shirt featuring popular cartoon characters. Made from soft and breathable cotton, perfect for kids.",
+      "productImageLink": "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcR7NR5P_iInEXkrlcOomh69Awyj49ES7JZcXdZ-_6VYSI1PqL8Znk1b8QJFisF8SjtbgIxz7bYT7gEQ4T3IScYAa5b7h0Rqfd5PJ5zotoMPszc6ocv-ttJ4",
+      "productPrice": 40,
+      "sellerName": "Kids Wear",
+      "sizes": [
+        { "name": "XS", "inStock": true, "availableQuantity": 20 },
+        { "name": "S", "inStock": true, "availableQuantity": 15 },
+        { "name": "M", "inStock": true, "availableQuantity": 10 }
+      ]
+    }

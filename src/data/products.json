@@ -1,0 +1,157 @@
+[
+    {
+      "id": "product_1",
+      "productRating": 4.9,
+      "productName": "Basic Tee 6-Pack",
+      "productDescription": "The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive colorway: 'Black'. Need to add an extra pop of color to your outfit? Our white tee has you covered.",
+      "productImageLink": "https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg",
+      "productPrice": 192,
+      "sellerName": "Fashion Hub",
+      "sizes": [
+        { "name": "XXS", "inStock": false, "availableQuantity": 10 },
+        { "name": "XS", "inStock": true, "availableQuantity": 10 },
+        { "name": "S", "inStock": true, "availableQuantity": 10 },
+        { "name": "M", "inStock": true, "availableQuantity": 10 },
+        { "name": "L", "inStock": true, "availableQuantity": 10 },
+        { "name": "XL", "inStock": true, "availableQuantity": 10 },
+        { "name": "2XL", "inStock": true, "availableQuantity": 10 },
+        { "name": "3XL", "inStock": true, "availableQuantity": 10 }
+      ]
+    },
+    {
+      "id": "product_2",
+      "productRating": 4.7,
+      "productName": "Classic Denim Jacket",
+      "productDescription": "Our Classic Denim Jacket is the ultimate layering piece for every season. With a timeless design and a comfortable fit, it pairs perfectly with any outfit.",
+      "productImageLink": "https://example.com/images/classic-denim-jacket.jpg",
+      "productPrice": 85,
+      "sellerName": "Denim Co.",
+      "sizes": [
+        { "name": "XS", "inStock": true, "availableQuantity": 12 },
+        { "name": "S", "inStock": true, "availableQuantity": 15 },
+        { "name": "M", "inStock": true, "availableQuantity": 8 },
+        { "name": "L", "inStock": true, "availableQuantity": 10 },
+        { "name": "XL", "inStock": false, "availableQuantity": 0 }
+      ]
+    },
+    {
+      "id": "product_3",
+      "productRating": 4.8,
+      "productName": "Leather Wallet",
+      "productDescription": "A sleek and durable leather wallet with multiple card slots and a cash compartment. Perfect for everyday use.",
+      "productImageLink": "https://example.com/images/leather-wallet.jpg",
+      "productPrice": 50,
+      "sellerName": "Leather World",
+      "sizes": []
+    },
+    {
+      "id": "product_4",
+      "productRating": 4.6,
+      "productName": "Running Shoes",
+      "productDescription": "Lightweight and breathable running shoes designed for maximum comfort and performance. Ideal for long runs and daily workouts.",
+      "productImageLink": "https://example.com/images/running-shoes.jpg",
+      "productPrice": 140,
+      "sellerName": "Sports Gear",
+      "sizes": [
+        { "name": "8", "inStock": true, "availableQuantity": 20 },
+        { "name": "9", "inStock": true, "availableQuantity": 15 },
+        { "name": "10", "inStock": true, "availableQuantity": 10 }
+      ]
+    },
+    {
+      "id": "product_5",
+      "productRating": 4.9,
+      "productName": "Summer Dress",
+      "productDescription": "A light and breezy summer dress with a floral print. Perfect for beach outings and casual summer days.",
+      "productImageLink": "https://example.com/images/summer-dress.jpg",
+      "productPrice": 80,
+      "sellerName": "Summer Vibes",
+      "sizes": [
+        { "name": "S", "inStock": true, "availableQuantity": 10 },
+        { "name": "M", "inStock": true, "availableQuantity": 12 },
+        { "name": "L", "inStock": false, "availableQuantity": 0 }
+      ]
+    },
+    {
+      "id": "product_6",
+      "productRating": 4.5,
+      "productName": "Unisex Hoodie",
+      "productDescription": "A cozy and versatile hoodie made from soft fleece material. Features a drawstring hood and front pouch pocket.",
+      "productImageLink": "https://example.com/images/unisex-hoodie.jpg",
+      "productPrice": 75,
+      "sellerName": "Comfy Wear",
+      "sizes": [
+        { "name": "S", "inStock": true, "availableQuantity": 20 },
+        { "name": "M", "inStock": true, "availableQuantity": 18 },
+        { "name": "L", "inStock": true, "availableQuantity": 10 }
+      ]
+    },
+    {
+      "id": "product_7",
+      "productRating": 4.8,
+      "productName": "Yoga Pants",
+      "productDescription": "Comfortable and stretchy yoga pants ideal for workouts and casual wear. Features a high waistband and moisture-wicking fabric.",
+      "productImageLink": "https://example.com/images/yoga-pants.jpg",
+      "productPrice": 60,
+      "sellerName": "Active Wear",
+      "sizes": [
+        { "name": "XS", "inStock": true, "availableQuantity": 15 },
+        { "name": "S", "inStock": true, "availableQuantity": 20 },
+        { "name": "M", "inStock": true, "availableQuantity": 18 },
+        { "name": "L", "inStock": true, "availableQuantity": 10 }
+      ]
+    },
+    {
+      "id": "product_8",
+      "productRating": 4.7,
+      "productName": "Leather Belt",
+      "productDescription": "A classic leather belt with a sleek buckle design. Perfect for both casual and formal attire.",
+      "productImageLink": "https://example.com/images/leather-belt.jpg",
+      "productPrice": 35,
+      "sellerName": "Accessories Co.",
+      "sizes": [
+        { "name": "32", "inStock": true, "availableQuantity": 10 },
+        { "name": "34", "inStock": true, "availableQuantity": 15 },
+        { "name": "36", "inStock": true, "availableQuantity": 10 }
+      ]
+    },
+    {
+      "id": "product_9",
+      "productRating": 4.9,
+      "productName": "Fashion Handbag",
+      "productDescription": "A stylish and spacious handbag made from premium materials. Features multiple compartments for easy organization.",
+      "productImageLink": "https://example.com/images/handbag.jpg",
+      "productPrice": 150,
+      "sellerName": "Luxury Bags",
+      "sizes": []
+    },
+    {
+      "id": "product_10",
+      "productRating": 4.7,
+      "productName": "Casual Sneakers",
+      "productDescription": "Stylish and comfortable sneakers for everyday wear. Made from durable materials with a cushioned sole for added comfort.",
+      "productImageLink": "https://example.com/images/casual-sneakers.jpg",
+      "productPrice": 100,
+      "sellerName": "Footwear Hub",
+      "sizes": [
+        { "name": "8", "inStock": true, "availableQuantity": 10 },
+        { "name": "9", "inStock": true, "availableQuantity": 8 },
+        { "name": "10", "inStock": true, "availableQuantity": 5 }
+      ]
+    },
+    {
+      "id": "product_11",
+      "productRating": 4.6,
+      "productName": "Kids' Cartoon T-Shirt",
+      "productDescription": "A fun and vibrant t-shirt featuring popular cartoon characters. Made from soft and breathable cotton, perfect for kids.",
+      "productImageLink": "https://example.com/images/kids-tshirt.jpg",
+      "productPrice": 40,
+      "sellerName": "Kids Wear",
+      "sizes": [
+        { "name": "XS", "inStock": true, "availableQuantity": 20 },
+        { "name": "S", "inStock": true, "availableQuantity": 15 },
+        { "name": "M", "inStock": true, "availableQuantity": 10 }
+      ]
+    }
+  ]
+  

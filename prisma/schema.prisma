@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        String    @id @default(uuid())
+  email                     String    @unique
+  password                  String
+  token                     String?
+  accessToken               String?
+  accessTokenExpiry         String?
+  accessTokenStatus         String?
+  accessTokenGenerationTime DateTime? @default(now())
+
+  orders Order[]
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @default(now())
+}
+
+model Order {
+  id              String    @id @default(uuid())
+  userId          String?
+  shippingAddress String
+  mobileNumber    String
+  email           String
+  paymentMethod   String
+  totalPrice      Float
+  createdAt       DateTime? @default(now())
+  updatedAt       DateTime? @default(now())
+
+  User       User?       @relation(fields: [userId], references: [id])
+  orderItems OrderItem[]
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id                  String @id @default(uuid())
+  orderId             String
+  productId           String
+  productName         String
+  selectedSize        String
+  totalPrice          Float?
+  quantity            Int
+  sellerName          String
+  selectedProductSize String
+  order               Order?  @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+}
+
+model ProductSize {
+  name              String  @id @unique
+  availableQuantity Int     @default(10)
+  inStock           Boolean @default(true)
+}
