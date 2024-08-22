@@ -24,7 +24,7 @@ type CartActions = {
     paymentMethod: string,
     cartItems: CartItem[],
     orderTotalPrice: number
-  ) => void;
+  ) => Promise<void>;
 };
 
 export const useCartStore = create<CartState & CartActions>()(
@@ -202,7 +202,7 @@ export const useCartStore = create<CartState & CartActions>()(
             throw new Error("Cart is empty.");
           }
 
-          const response = await fetch("api/profile/orders/cart", {
+          const response = await fetch("/api/profile/orders/cart", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

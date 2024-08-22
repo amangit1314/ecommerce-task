@@ -9,7 +9,7 @@ interface ProductState {
   error: string;
   productDetails: Product | null;
   cart: CartItem[];
-  selectedSize: ProductSize | null; // Add selectedSize to the state
+  selectedSize: ProductSize | null; 
 }
 
 type ProductActions = {
@@ -17,7 +17,7 @@ type ProductActions = {
   addToCart: (cartItem: CartItem) => void;
   removeFromCart: (productId: string) => void;
   changeQuantity: (productId: string, quantity: number) => void;
-  setSelectedSize: (size: ProductSize) => void; // Add setSelectedSize action
+  setSelectedSize: (size: ProductSize) => void; 
 };
 
 export const useProductStore = create<ProductState & ProductActions>()(
@@ -27,7 +27,7 @@ export const useProductStore = create<ProductState & ProductActions>()(
       error: "",
       productDetails: null,
       cart: [],
-      selectedSize: null, // Initialize selectedSize as null
+      selectedSize: null, 
 
       fetchProductDetails: async (productId: string) => {
         try {
@@ -72,7 +72,6 @@ export const useProductStore = create<ProductState & ProductActions>()(
         );
 
         if (existingItem) {
-          // If the item is already in the cart, update the quantity
           const updatedCart = state.cart.map((item) =>
             item.productId === cartItem.productId
               ? {
@@ -83,7 +82,6 @@ export const useProductStore = create<ProductState & ProductActions>()(
           );
           set({ cart: updatedCart });
         } else {
-          // If the item is not in the cart, add it
           set({ cart: [...state.cart, cartItem] });
         }
       },
@@ -102,7 +100,7 @@ export const useProductStore = create<ProductState & ProductActions>()(
         set({ cart: updatedCart });
       },
       setSelectedSize: (size: ProductSize) => {
-        set({ selectedSize: size }); // Set the selected size
+        set({ selectedSize: size }); 
       },
     }),
     {

@@ -23,13 +23,11 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
   const productId = params?.id!;
   const { productDetails, fetchProductDetails, loading, error } =
     useProductStore();
-  const { addToCart, loading: cartLoading, error: cartError } = useCartStore();
   const {
     user,
     loading: userLoading,
     error: userError,
     isAuthenticated,
-    placeOrder,
   } = useUserStore();
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null);
@@ -47,12 +45,13 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
   }
 
   if (isAuthenticated && userLoading) {
-    <div className="text-yellow-500 font-semibold text-base">
-      Loading user Details⏳ ...
-    </div>;
+    return (
+      <div className="text-yellow-500 font-semibold text-base">
+        Loading User Details⏳ ...
+      </div>
+    );
   }
 
-  // Custom error handling for different errors
   if (error) {
     return (
       <div className="text-red-500 font-semibold text-base">
@@ -65,14 +64,6 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
     return (
       <div className="text-red-500 font-semibold text-base">
         Error loading user details: {userError}
-      </div>
-    );
-  }
-
-  if (cartError) {
-    return (
-      <div className="text-red-500 font-semibold text-base">
-        Error adding to cart: {cartError}
       </div>
     );
   }
@@ -135,7 +126,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
                 </svg>
               </div>
 
-              {/* product name breacrumb item */}
+              {/* product name breadcrumb item */}
               <li className="text-sm">
                 <Link
                   href={`/products/${productId}`}
@@ -151,7 +142,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
 
         {/* product details */}
         <div className="mx-auto px-2 md:px-0 lg:grid lg:grid-cols-2 lg:gap-x-8 overflow-x-hidden md:pr-8 md:mb-8">
-          {/* Product Image  */}
+          {/* Product Image */}
           <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-1 lg:gap-x-8 lg:px-8">
             <div className="h-[100vh] w-full md:w-[45vw] sm:overflow-hidden sm:rounded-lg">
               <Image
@@ -173,50 +164,44 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
               </h1>
             </div>
 
-            {/* ratings, price, description, size, cart button and check button */}
+            {/* ratings, price, description, size, cart button, and checkout button */}
             <div className="mt-4 lg:row-span-3 lg:mt-0 space-y-6">
               {/* product average star ratings */}
               <ProductAverageStarRatings product={product} />
 
               {/* product price */}
-              <p className="text-3xl tracking-tight text-zinc-900 dark:text-white ">
+              <p className="text-3xl tracking-tight text-zinc-900 dark:text-white">
                 ${product.productPrice} USD
               </p>
 
               {/* product description */}
-              <div className="">
+              <div>
                 <h3 className="sr-only">Description</h3>
 
                 <div className="space-y-2">
-                  {/* product description */}
                   <p
                     className={`${
                       showFullDescription ? "" : "line-clamp-4"
-                    }  text-base text-slate-600 dark:text-gray-300 ${
-                      showFullDescription ? "" : "overflow-hidden"
-                    }`}
+                    } text-base text-slate-600 dark:text-gray-300`}
                   >
                     {product.productDescription}
                   </p>
 
-                  {/* show more text button */}
-                  {product.productDescription.length > 250 ? (
+                  {product.productDescription.length > 250 && (
                     <button
-                      className="text-sm tracking-tighter font-medium hover:text-red-600 text-red-400 underline .leading-relaxed"
+                      className="text-sm tracking-tighter font-medium hover:text-red-600 text-red-400 underline"
                       onClick={() =>
                         setShowFullDescription(!showFullDescription)
                       }
                     >
                       {showFullDescription ? "Show Less" : "Show More"}
                     </button>
-                  ) : (
-                    <div></div>
                   )}
                 </div>
               </div>
 
               {/* Sizes, Add to cart button, Checkout button */}
-              <form className="">
+              <form>
                 {/* Sizes */}
                 <ProductSizes
                   product={product}
@@ -224,17 +209,15 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
                   setSelectedSize={setSelectedSize}
                 />
 
-                {/* Add to cart button  */}
+                {/* Add to cart button */}
                 <AddToCartButton
                   product={product}
                   selectedSize={selectedSize ?? product.sizes[0]}
-                  addToCart={addToCart}
-                  user={user!}
+                  user={user}
                   isAuthenticated={isAuthenticated}
-                  loading={cartLoading}
                 />
 
-                {/* Checkout button  */}
+                {/* Checkout button */}
                 <CheckoutButton
                   product={product}
                   selectedSize={selectedSize ?? product.sizes[0]}
@@ -335,39 +318,18 @@ const ProductSizes = ({
 const AddToCartButton = ({
   product,
   selectedSize,
-  addToCart,
   user,
-  loading,
   isAuthenticated,
 }: {
   product: Product;
   selectedSize: ProductSize;
-  addToCart: (newCartItem: CartItem) => void;
+  user: User | null;
   isAuthenticated: boolean;
-  user?: User;
-  loading: boolean;
 }) => {
-  let userId;
-
-  if (isAuthenticated) {
-    userId = user?.id! as string;
-  }
-
-  const cartItem = {
-    cartItemId: uuidv4(),
-    userId: userId as string,
-    productId: product.id,
-    productName: product.productName,
-    sellerName: product.sellerName,
-    productPrice: product.productPrice,
-    productImage: product.productImageLink,
-    totalQuantity: 1,
-    totalPrice: product.productPrice,
-    selectedProductSize: selectedSize ?? product.sizes[0],
-  };
+  const { addToCart, loading, error } = useCartStore();
 
   const handleAddToCart = () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !user) {
       alert("You need to log in to add items to the cart.");
       return;
     }
@@ -377,22 +339,38 @@ const AddToCartButton = ({
       return;
     }
 
+    const cartItem = {
+      cartItemId: uuidv4(),
+      userId: user?.id! as string,
+      productId: product.id,
+      productName: product.productName,
+      sellerName: product.sellerName,
+      productPrice: product.productPrice,
+      productImage: product.productImageLink,
+      totalQuantity: 1,
+      totalPrice: product.productPrice,
+      selectedProductSize: selectedSize,
+    };
+
     addToCart(cartItem);
     console.log("Added item to cart:", cartItem);
   };
 
   return (
     <button
-      type="submit"
+      type="button"
       onClick={handleAddToCart}
-      disabled={!isAuthenticated}
+      disabled={loading || !isAuthenticated}
       className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed"
     >
-      
-      {/* Add to cart */}
-      {/* {loading ? <Loader2 className="animate-spin" /> :  */}
-      <div className="flex justify-center items-center"><ShoppingCart size={22} className="mr-2" />  <p>Add to cart</p></div> 
-      {/* } */}
+      {loading ? (
+        <Loader2 className="animate-spin" />
+      ) : (
+        <div className="flex justify-center items-center">
+          <ShoppingCart size={22} className="mr-2" />
+          <p>Add to cart</p>
+        </div>
+      )}
     </button>
   );
 };
