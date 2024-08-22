@@ -40,6 +40,7 @@ export const POST = async (request: Request) => {
         email,
         paymentMethod,
         totalPrice: orderTotalPrice,
+    
         // No orderItems here
       },
       include: {
@@ -53,6 +54,7 @@ export const POST = async (request: Request) => {
         db.orderItem.create({
           data: {
             selectedSize: item.selectedSize,
+            productImageLink: orderItems[0].productImageLink,
             totalPrice: item.totalPrice,
             quantity: item.quantity,
             productId: item.productId,
