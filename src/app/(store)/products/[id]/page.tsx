@@ -18,6 +18,7 @@ import { useUserStore } from "@/zustand/user-store";
 import { useRouter } from "next/navigation";
 import { User } from "@prisma/client";
 import { CartItem } from "@/types/cart-item";
+import toast, { Toaster } from "react-hot-toast";
 
 const ProductPage = ({ params }: { params: { id: string } }) => {
   const productId = params?.id!;
@@ -328,6 +329,10 @@ const AddToCartButton = ({
 }) => {
   const { addToCart, loading, error } = useCartStore();
 
+  if (error) {
+    toast.error(`Cart Error: ${error}`);
+  }
+
   const handleAddToCart = () => {
     if (!isAuthenticated || !user) {
       alert("You need to log in to add items to the cart.");
@@ -353,25 +358,31 @@ const AddToCartButton = ({
     };
 
     addToCart(cartItem);
+
     console.log("Added item to cart:", cartItem);
+    toast.success("Product add to cart");
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleAddToCart}
-      disabled={loading || !isAuthenticated || !selectedSize}
-      className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed"
-    >
-      {loading ? (
-        <Loader2 className="animate-spin" />
-      ) : (
-        <div className="flex justify-center items-center">
-          <ShoppingCart size={22} className="mr-2" />
-          <p>Add to cart</p>
-        </div>
-      )}
-    </button>
+    <div>
+      <Toaster />
+
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        disabled={loading || !isAuthenticated || !selectedSize}
+        className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed"
+      >
+        {loading ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          <div className="flex justify-center items-center">
+            <ShoppingCart size={22} className="mr-2" />
+            <p>Add to cart</p>
+          </div>
+        )}
+      </button>
+    </div>
   );
 };
 
@@ -389,7 +400,9 @@ const CheckoutButton = ({
   const onClick = () => {
     if (!isAuthenticated) {
       alert("You are not logged in, log in to checkout ...");
-    } else router.push(`/products/${product.id}/checkout`);
+    } else {
+      router.push(`/products/${product.id}/checkout`);
+    }
   };
 
   return (
@@ -397,7 +410,7 @@ const CheckoutButton = ({
       type="submit"
       onClick={onClick}
       disabled={!selectedSize || !isAuthenticated}
-      className="mt-4 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+      className="mt-4 flex w-full items-center disabled:opacity-40 disabled:cursor-not-allowed justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
     >
       Checkout
     </button>

@@ -22,9 +22,6 @@ const CartCheckoutPage = () => {
   const { isAuthenticated, user } = useUserStore();
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
-  const [selectedPaymentOption, setSelectedPaymentOption] = useState<
-    string | null
-  >(null);
   const router = useRouter();
 
   const deliveryAddresses = [
@@ -44,22 +41,20 @@ const CartCheckoutPage = () => {
 
   const handlePlaceOrder = () => {
     if (isAuthenticated && selectedAddress) {
-      // Implement order placement logic
       placeOrder(
         user?.id!,
         selectedAddress.name,
-        selectedAddress.phone, // mobile number
+        selectedAddress.phone,
         user?.email!,
-        "Cash on delivery",
-        cartItems,
-        cartItems.reduce((total, item) => total + item.totalPrice, 0)
+        "Cash on Delivery"
       );
-
       toast.success("Order placed successfully!");
-      clearCart(); // Clear the cart after order placement
-      router.push('/');
+      clearCart();
+      router.push("/");
+    } else if (!isAuthenticated) {
+      toast.error("Please login 🔐 to checkout");
     } else {
-      toast.error("Please select a delivery address and payment method.");
+      toast.error("Please select a delivery address");
     }
   };
 
@@ -134,25 +129,6 @@ const CartCheckoutPage = () => {
                 {/* Conditionally render the AddDeliveryAddressForm */}
                 {isAddingAddress && <AddDeliveryAddressForm />}
               </div>
-
-              {/* Payment options */}
-              {/* <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Payment Method
-              </h3>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <PaymentOptionCard
-                  title={"Cash on Delivery"}
-                  description={"Pay with cash upon delivery."}
-                  selected={selectedPaymentOption === "Cash on Delivery"}
-                  setSelectedPaymentOption={() =>
-                    setSelectedPaymentOption("Cash on Delivery")
-                  }
-                />
-      
-              </div>
-            </div> */}
             </div>
 
             <div className="space-y-6 max-w-xs w-full">
@@ -205,15 +181,15 @@ const CartCheckoutPage = () => {
               </div>
 
               <CheckoutSummary
-                paymentMethod={selectedPaymentOption ?? "Cash on Delivery"}
                 shippingAddress={selectedAddress ?? deliveryAddresses[0]}
               />
 
               {/* Place Order Button */}
               <button
                 type="button"
+                disabled={!isAuthenticated || !setSelectedAddress}
                 onClick={handlePlaceOrder}
-                className="mt-8 w-full rounded-lg bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                className="mt-8 w-full rounded-lg bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Place Order
               </button>
@@ -286,13 +262,7 @@ const AddDeliveryAddressForm = () => {
   );
 };
 
-const CheckoutSummary = ({
-  paymentMethod,
-  shippingAddress,
-}: {
-  paymentMethod: any;
-  shippingAddress: Address;
-}) => {
+const CheckoutSummary = ({ shippingAddress }: { shippingAddress: Address }) => {
   const { cartItems } = useCartStore();
 
   const totalPrice = cartItems.reduce(
@@ -320,7 +290,9 @@ const CheckoutSummary = ({
           <span className="text-gray-600 dark:text-gray-400">
             Payment Method
           </span>
-          <span className="text-gray-900 dark:text-white">{paymentMethod}</span>
+          <span className="text-gray-900 dark:text-white">
+            Cash on Delivery
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600 dark:text-gray-400">Subtotal</span>
@@ -336,60 +308,5 @@ const CheckoutSummary = ({
         </div>
       </div>
     </div>
-  );
-};
-
-// -------------------------------------------------------------------
-
-const steps = ["Cart", "Delivery", "Payment", "Review", "Complete"];
-
-const CheckoutStepper = () => {
-  return (
-    <div className="flex justify-between items-center">
-      {steps.map((step, index) => (
-        <div key={index} className="flex items-center space-x-2">
-          <div
-            className={`h-8 w-8 rounded-full flex items-center justify-center ${
-              index === steps.length - 1 ? "bg-red-600" : "bg-gray-300"
-            } text-white`}
-          >
-            {index + 1}
-          </div>
-          <span className="font-medium text-gray-900 dark:text-white">
-            {step}
-          </span>
-          {index < steps.length - 1 && (
-            <div className="w-8 border-t-2 border-gray-300"></div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const PaymentOptionCard = ({
-  title,
-  description,
-  selected,
-  setSelectedPaymentOption,
-}: {
-  title: string;
-  description: string;
-  selected: boolean;
-  setSelectedPaymentOption: (
-    value: React.SetStateAction<string | null>
-  ) => void;
-}) => {
-  return (
-    <button
-      onClick={() => setSelectedPaymentOption("Cash on Delivery")}
-      className={cn(
-        `p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-red-500`,
-        selected ? `border-red-500` : ""
-      )}
-    >
-      <h4 className="font-medium text-gray-900 dark:text-white">{title}</h4>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
-    </button>
   );
 };

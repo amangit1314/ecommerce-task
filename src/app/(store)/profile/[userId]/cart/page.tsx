@@ -13,19 +13,10 @@ import { useUserStore } from "@/zustand/user-store";
 
 const CartPage = ({ params }: { params: { userId: string } }) => {
   const userId = params?.userId!;
-  const { loading, error, cartItems, fetchCartItems } = useCartStore();
-
-  useEffect(() => {
-    fetchCartItems();
-  }, [fetchCartItems]);
+  const { loading, cartItems } = useCartStore();
 
   if (loading) {
     toast.loading("Loading cartitems ⏳ ...");
-  }
-
-  if (error) {
-    console.log("Error in loading cartitems: ", error);
-    toast.error("Error loading cartitems ❌");
   }
 
   return (
@@ -46,7 +37,6 @@ const CartPage = ({ params }: { params: { userId: string } }) => {
           <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
             {/* cart items and people also bought */}
             <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl">
-              {/* cart items list */}
               <div className="space-y-6">
                 {cartItems.map((cartItem: CartItem) => (
                   <div key={cartItem.cartItemId}>
@@ -55,12 +45,11 @@ const CartPage = ({ params }: { params: { userId: string } }) => {
                 ))}
               </div>
 
-              {/* people also bought */}
               <PeopleAlsoBought />
             </div>
 
             {/* order summary */}
-            <OrderSummary />
+            <OrderSummary userId={userId} />
           </div>
         </div>
       </section>
@@ -70,9 +59,8 @@ const CartPage = ({ params }: { params: { userId: string } }) => {
 
 export default CartPage;
 
-const OrderSummary = () => {
-  const { totalItems, totalPrice, cartItems } = useCartStore();
-  const { user } = useUserStore();
+const OrderSummary = ({ userId }: { userId: string }) => {
+  const { totalItems, totalPrice } = useCartStore();
   const savings = 0;
   const storePickup = totalItems >= 1 ? (totalPrice > 25 ? 0 : 5) : 0;
   const tax = Math.ceil(totalItems >= 1 ? totalPrice * 0.05 : 0); // 5% tax
@@ -109,14 +97,14 @@ const OrderSummary = () => {
               </dd>
             </dl>
 
-            <dl className="flex items-center justify-between gap-4">
+            {/* <dl className="flex items-center justify-between gap-4">
               <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
                 Total Items
               </dt>
               <dd className="text-base font-medium text-gray-900 dark:text-white">
                 {totalItems}
               </dd>
-            </dl>
+            </dl> */}
 
             <dl className="flex items-center justify-between gap-4">
               <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
@@ -150,7 +138,7 @@ const OrderSummary = () => {
         {/* checkout button */}
         <button
           onClick={() => {
-            router.push(`/profile/${user?.id!}/cart/checkout`);
+            router.push(`/profile/${userId}/cart/checkout`);
           }}
           disabled={totalPrice === 0}
           className="flex w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-40 rounded-lg bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"

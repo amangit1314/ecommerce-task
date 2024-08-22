@@ -1,9 +1,9 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { CartItem } from "@/types/cart-item";
 import { useCartStore } from "@/zustand/cart-store";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 export const CartItemCard = ({ cartItem }: { cartItem: CartItem }) => {
@@ -11,8 +11,9 @@ export const CartItemCard = ({ cartItem }: { cartItem: CartItem }) => {
   const [quantity, setQuantity] = useState(cartItem.totalQuantity);
 
   const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity <= 0) return; // Prevent quantity from going below 1
     setQuantity(newQuantity);
-    updateQuantity(cartItem.productId, quantity);
+    updateQuantity(cartItem.cartItemId, newQuantity);
   };
 
   const handleRemove = () => {
@@ -25,10 +26,12 @@ export const CartItemCard = ({ cartItem }: { cartItem: CartItem }) => {
       <div className="flex items-center">
         {/* cartitem image */}
         <Link href={`/products/${cartItem.productId}`}>
-          <img
+          <Image
             src={cartItem.productImage}
             alt={cartItem.productName}
-            className="w-20 h-20"
+            height={80}
+            width={80}
+            className="w-20 h-20 object-cover rounded-md"
           />
         </Link>
 
@@ -42,19 +45,19 @@ export const CartItemCard = ({ cartItem }: { cartItem: CartItem }) => {
             Size: {cartItem.selectedProductSize.name}
           </p>
 
-          {/* quantitiy and quantity buttons */}
+          {/* quantity and quantity buttons */}
           <div className="flex items-center mt-2">
             <button
-              onClick={() => handleQuantityChange(quantity - 1)}
+              onClick={() => handleQuantityChange(Math.max(quantity - 1, 1))}
               disabled={quantity <= 1}
-              className="px-2 py-1 text-lg font-bold bg-gray-200 rounded-md hover:bg-red-500 transition-all duration-200"
+              className="px-2 py-0.5 text-lg font-bold bg-gray-200 rounded-md hover:bg-red-500 transition-all duration-200"
             >
               -
             </button>
             <span className="mx-4">{quantity}</span>
             <button
               onClick={() => handleQuantityChange(quantity + 1)}
-              className="px-2 py-1 text-lg font-bold bg-gray-200 rounded-md  hover:bg-red-500 transition-all duration-200"
+              className="px-2 py-0.5 text-lg font-bold bg-gray-200 rounded-md hover:bg-red-500 transition-all duration-200"
             >
               +
             </button>

@@ -11,7 +11,6 @@ type CartState = {
 };
 
 type CartActions = {
-  fetchCartItems: () => void;
   addToCart: (newCartItem: CartItem) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -21,9 +20,7 @@ type CartActions = {
     shippingAddress: string,
     mobileNumber: string,
     email: string,
-    paymentMethod: string,
-    cartItems: CartItem[],
-    orderTotalPrice: number
+    paymentMethod: string
   ) => Promise<void>;
 };
 
@@ -109,37 +106,41 @@ export const useCartStore = create<CartState & CartActions>()(
         }
 
         if (quantity <= 0) {
-          set((state) => ({
-            loading: false,
-            cartItems: state.cartItems.filter(
+          set((state) => {
+            const updatedCartItems = state.cartItems.filter(
               (item) => item.cartItemId !== cartItemId
-            ),
-            totalItems: state.totalItems - existingItem.totalQuantity,
-            totalPrice: state.totalPrice - existingItem.totalPrice,
-          }));
+            );
+            return {
+              loading: false,
+              cartItems: updatedCartItems,
+              totalItems: state.totalItems - existingItem.totalQuantity,
+              totalPrice: state.totalPrice - existingItem.totalPrice,
+            };
+          });
         } else {
-          const updatedCartItems = cartItems.map((item) =>
-            item.cartItemId === cartItemId
-              ? {
-                  ...item,
-                  totalQuantity: quantity,
-                  totalPrice: item.productPrice * quantity,
-                }
-              : item
-          );
-
-          const updatedTotalPrice = updatedCartItems.reduce(
-            (acc, item) => acc + item.totalPrice,
-            0
-          );
-
-          set({
-            loading: false,
-            cartItems: [...updatedCartItems],
-            totalPrice: updatedTotalPrice,
+          set((state) => {
+            const updatedCartItems = state.cartItems.map((item) =>
+              item.cartItemId === cartItemId
+                ? {
+                    ...item,
+                    totalQuantity: quantity,
+                    totalPrice: item.productPrice * quantity,
+                  }
+                : item
+            );
+            const updatedTotalPrice = updatedCartItems.reduce(
+              (acc, item) => acc + item.totalPrice,
+              0
+            );
+            return {
+              loading: false,
+              cartItems: updatedCartItems,
+              totalPrice: updatedTotalPrice,
+            };
           });
         }
       },
+
       clearCart: () =>
         set({ loading: false, cartItems: [], totalItems: 0, totalPrice: 0 }),
       placeOrder: async (
@@ -147,9 +148,7 @@ export const useCartStore = create<CartState & CartActions>()(
         shippingAddress: string,
         mobileNumber: string,
         email: string,
-        paymentMethod: string,
-        cartItems: CartItem[],
-        orderTotalPrice: number
+        paymentMethod: string
       ) => {
         set({ loading: true });
 
@@ -157,10 +156,10 @@ export const useCartStore = create<CartState & CartActions>()(
           const { cartItems, totalPrice } = get();
 
           if (cartItems.length === 0) {
-            throw new Error("Cart is empty.");
+            set({ error: "Cart is empty 🗳" });
           }
 
-          const response = await fetch("/api/profile/orders/cart", {
+          const response = await fetch("/api/orders/cart", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -172,24 +171,21 @@ export const useCartStore = create<CartState & CartActions>()(
               email,
               paymentMethod,
               cartItems,
-              orderTotalPrice,
+              totalPrice,
             }),
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to place order: ${response.statusText}`);
+            set({
+              error: `Failed to place order: ${response.statusText}`,
+            });
           }
-
-          const data = await response.json();
 
           set({
             cartItems: [],
             totalItems: 0,
             totalPrice: 0,
           });
-
-          // Optionally update global order state if necessary
-          // useUserStore.getState().placeOrder(data.order);
         } catch (error) {
           console.error("Place order error:", error);
           set({ error: "Failed to place order", loading: false });
