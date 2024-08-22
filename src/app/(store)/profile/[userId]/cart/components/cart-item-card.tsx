@@ -12,15 +12,11 @@ export const CartItemCard = ({ cartItem }: { cartItem: CartItem }) => {
 
   const handleQuantityChange = (newQuantity: number) => {
     setQuantity(newQuantity);
-    updateQuantity(
-      cartItem.productId,
-      cartItem.selectedProductSize.name,
-      newQuantity
-    );
+    updateQuantity(cartItem.productId, quantity);
   };
 
   const handleRemove = () => {
-    removeFromCart(cartItem.productId, cartItem.selectedProductSize.name);
+    removeFromCart(cartItem.cartItemId);
   };
 
   return (

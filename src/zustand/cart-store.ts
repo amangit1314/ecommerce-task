@@ -13,8 +13,8 @@ type CartState = {
 type CartActions = {
   fetchCartItems: () => void;
   addToCart: (newCartItem: CartItem) => void;
-  removeFromCart: (productId: string, size: string) => void;
-  updateQuantity: (productId: string, size: string, quantity: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   placeOrder: (
     userId: string,
@@ -37,88 +37,53 @@ export const useCartStore = create<CartState & CartActions>()(
       totalPrice: 0,
       fetchCartItems: () => {},
       addToCart: (newCartItem: CartItem) => {
-        const cartItems = [...get().cartItems];
-        const cartTotalItems = get().totalItems;
-        const cartTotalPrice = get().totalPrice;
+        const { cartItems, totalItems, totalPrice } = get();
 
-        // Check if the item with the same productId and size already exists in the cart
+        // Check if the item with the same productId and selectedProductSize already exists in the cart
         const existingItemIndex = cartItems.findIndex(
           (item) =>
             item.productId === newCartItem.productId &&
-            item.selectedProductSize === newCartItem.selectedProductSize
+            item.selectedProductSize.name ===
+              newCartItem.selectedProductSize.name
         );
 
         if (existingItemIndex !== -1) {
-          // Update quantity and total price for the existing item with the same size
-          cartItems[existingItemIndex].totalQuantity +=
-            newCartItem.totalQuantity;
-          cartItems[existingItemIndex].totalPrice += newCartItem.totalPrice;
+          // Increment quantity and total price for the existing item with the same size
+          const updatedCartItems = cartItems.map((item, index) =>
+            index === existingItemIndex
+              ? {
+                  ...item,
+                  totalQuantity: item.totalQuantity + newCartItem.totalQuantity,
+                  totalPrice: item.totalPrice + newCartItem.totalPrice,
+                }
+              : item
+          );
+
+          set({
+            loading: false,
+            cartItems: updatedCartItems,
+            totalItems: totalItems + newCartItem.totalQuantity,
+            totalPrice: totalPrice + newCartItem.totalPrice,
+          });
         } else {
-          // Add the new item to the cart
-          cartItems.push(newCartItem);
+          // Add the new item to the cart if the size is different
+          set({
+            loading: false,
+            cartItems: [...cartItems, newCartItem],
+            totalItems: totalItems + newCartItem.totalQuantity,
+            totalPrice: totalPrice + newCartItem.totalPrice,
+          });
         }
-
-        set({
-          loading: false,
-          cartItems: [...cartItems],
-          totalItems: cartTotalItems + newCartItem.totalQuantity,
-          totalPrice: cartTotalPrice + newCartItem.totalPrice,
-        });
       },
-
-      // addToCart: (newCartItem: CartItem) => {
-      //   set((state) => {
-      //     console.log("Current cart items:", state.cartItems);
-      //     const cartItems = [...state.cartItems];
-      //     const existingItemIndex = cartItems.findIndex(
-      //       (item) =>
-      //         item.productId === newCartItem.productId &&
-      //         item.selectedProductSize === newCartItem.selectedProductSize
-      //     );
-
-      //     if (existingItemIndex !== -1) {
-      //       const existingItem = cartItems[existingItemIndex];
-      //       existingItem.totalQuantity += newCartItem.totalQuantity;
-      //       existingItem.totalPrice += newCartItem.totalPrice;
-      //       cartItems[existingItemIndex] = { ...existingItem };
-      //       console.log("Updated item:", cartItems[existingItemIndex]);
-      //     } else {
-      //       cartItems.push(newCartItem);
-      //     }
-
-      //     const newTotalItems = cartItems.reduce(
-      //       (acc, item) => acc + item.totalQuantity,
-      //       0
-      //     );
-      //     const newTotalPrice = cartItems.reduce(
-      //       (acc, item) => acc + item.totalPrice,
-      //       0
-      //     );
-
-      //     return {
-      //       loading: false,
-      //       cartItems,
-      //       totalItems: newTotalItems,
-      //       totalPrice: newTotalPrice,
-      //     };
-      //   });
-      // },
-
-      removeFromCart: (productId: string, size: string) => {
+      removeFromCart: (cartItemId: string) => {
         set((state) => {
           const itemToRemove = state.cartItems.find(
-            (item) =>
-              item.productId === productId &&
-              item.selectedProductSize.name === size
+            (item) => item.cartItemId === cartItemId
           );
           if (!itemToRemove) return state;
 
           const updatedCartItems = state.cartItems.filter(
-            (item) =>
-              !(
-                item.productId === productId &&
-                item.selectedProductSize.name === size
-              )
+            (item) => item.cartItemId !== cartItemId
           );
 
           return {
@@ -129,12 +94,10 @@ export const useCartStore = create<CartState & CartActions>()(
           };
         });
       },
-      updateQuantity: (productId: string, size: string, quantity: number) => {
+      updateQuantity: (cartItemId: string, quantity: number) => {
         const cartItems = get().cartItems;
         const existingItem = cartItems.find(
-          (item) =>
-            item.productId === productId &&
-            item.selectedProductSize.name === size
+          (item) => item.cartItemId === cartItemId
         );
 
         if (!existingItem) {
@@ -149,22 +112,17 @@ export const useCartStore = create<CartState & CartActions>()(
           set((state) => ({
             loading: false,
             cartItems: state.cartItems.filter(
-              (item) =>
-                !(
-                  item.productId === productId &&
-                  item.selectedProductSize.name === size
-                )
+              (item) => item.cartItemId !== cartItemId
             ),
-            totalItems: state.totalItems - existingItem!.totalQuantity,
-            totalPrice: state.totalPrice - existingItem!.totalPrice,
+            totalItems: state.totalItems - existingItem.totalQuantity,
+            totalPrice: state.totalPrice - existingItem.totalPrice,
           }));
         } else {
           const updatedCartItems = cartItems.map((item) =>
-            item.productId === productId &&
-            item.selectedProductSize.name === size
+            item.cartItemId === cartItemId
               ? {
                   ...item,
-                  quantity,
+                  totalQuantity: quantity,
                   totalPrice: item.productPrice * quantity,
                 }
               : item

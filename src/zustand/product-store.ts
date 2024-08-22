@@ -9,15 +9,22 @@ interface ProductState {
   error: string;
   productDetails: Product | null;
   cart: CartItem[];
-  selectedSize: ProductSize | null; 
+  selectedSize: ProductSize | null;
+  selectedQuantity: number;
 }
 
 type ProductActions = {
   fetchProductDetails: (productId: string) => Promise<void>;
-  addToCart: (cartItem: CartItem) => void;
-  removeFromCart: (productId: string) => void;
+
   changeQuantity: (productId: string, quantity: number) => void;
-  setSelectedSize: (size: ProductSize) => void; 
+  setSelectedSize: (size: ProductSize) => void;
+  placeOrder: (
+    userId: string,
+    shippingAddress: string,
+    mobileNumber: string,
+    email: string,
+    paymentMethod: string
+  ) => Promise<void>;
 };
 
 export const useProductStore = create<ProductState & ProductActions>()(
@@ -27,8 +34,8 @@ export const useProductStore = create<ProductState & ProductActions>()(
       error: "",
       productDetails: null,
       cart: [],
-      selectedSize: null, 
-
+      selectedSize: null,
+      selectedQuantity: 1,
       fetchProductDetails: async (productId: string) => {
         try {
           set({ loading: true });
@@ -65,7 +72,89 @@ export const useProductStore = create<ProductState & ProductActions>()(
           });
         }
       },
-      addToCart: (cartItem: CartItem) => {
+      changeQuantity: (productId: string, quantity: number) => {
+        const state = get();
+        const updatedCart = state.cart.map((item) =>
+          item.productId === productId ? { ...item, quantity } : item
+        );
+        set({ cart: updatedCart });
+      },
+      setSelectedSize: (size: ProductSize) => {
+        set({ selectedSize: size });
+      },
+      placeOrder: async (
+        userId: string,
+        shippingAddress: string,
+        mobileNumber: string,
+        email: string,
+        paymentMethod: string
+      ) => {
+        set({ loading: true });
+
+        try {
+          const { productDetails, selectedSize, selectedQuantity } = get();
+
+          if (!productDetails) {
+            throw new Error("No product selected for ordering.");
+          }
+
+          const orderItem = {
+            productId: productDetails.id,
+            productName: productDetails.productName,
+            sellerName: productDetails.sellerName,
+            selectedSize: selectedSize,
+            quantity: selectedQuantity,
+            totalPrice: productDetails.productPrice,
+          };
+
+          const response = await fetch("/api/orders", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId,
+              shippingAddress,
+              mobileNumber,
+              email,
+              paymentMethod,
+              orderItem,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to place order: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+
+          set({
+            selectedQuantity: 1,
+            selectedSize: productDetails?.sizes[0],
+          });
+
+          console.log("Order placed successfully:", data);
+        } catch (error: any) {
+          console.error("Place order error:", error);
+          set({ error: "Failed to place order", loading: false });
+        } finally {
+          set({ loading: false });
+        }
+      },
+    }),
+    {
+      name: "ecommerce-task-product-store",
+      getStorage: () => localStorage,
+    }
+  )
+);
+
+/**
+ *    ACTIONS:
+ *      // addToCart: (cartItem: CartItem) => void;
+  // removeFromCart: (productId: string) => void;
+ * 
+ *      addToCart: (cartItem: CartItem) => {
         const state = get();
         const existingItem = state.cart.find(
           (item) => item.productId === cartItem.productId
@@ -92,20 +181,4 @@ export const useProductStore = create<ProductState & ProductActions>()(
         );
         set({ cart: updatedCart });
       },
-      changeQuantity: (productId: string, quantity: number) => {
-        const state = get();
-        const updatedCart = state.cart.map((item) =>
-          item.productId === productId ? { ...item, quantity } : item
-        );
-        set({ cart: updatedCart });
-      },
-      setSelectedSize: (size: ProductSize) => {
-        set({ selectedSize: size }); 
-      },
-    }),
-    {
-      name: "ecommerce-task-product-store",
-      getStorage: () => localStorage,
-    }
-  )
-);
+ */
