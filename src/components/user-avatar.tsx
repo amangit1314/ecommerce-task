@@ -51,7 +51,7 @@ const UserAvatar = () => {
   return isAuthenticated ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="rounded-lg cursor-pointer transition-all duration-300">
+        <Avatar className="rounded-lg cursor-pointer transition-all duration-300 h-12 w-12">
           <AvatarImage
             src={
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxq2rx8L2_5PTUI7aA57jJ8z_NPecD2tmNWg&s"

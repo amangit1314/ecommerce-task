@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useProductStore } from "@/zustand/product-store";
-import { Router, ShoppingCart } from "lucide-react";
+import { Loader2, Router, ShoppingCart } from "lucide-react";
 import { Product } from "@/types/product";
 import ProductAverageStarRatings from "../components/product-average-star-ratings";
 import { Header } from "@/components/header";
@@ -38,12 +38,18 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
     fetchProductDetails(productId);
   }, [productId, fetchProductDetails]);
 
-  if (loading || userLoading || cartLoading) {
+  if (loading) {
     return (
       <div className="text-yellow-500 font-semibold text-base">
         Loading Product Details⏳ ...
       </div>
     );
+  }
+
+  if (isAuthenticated && userLoading) {
+    <div className="text-yellow-500 font-semibold text-base">
+      Loading user Details⏳ ...
+    </div>;
   }
 
   // Custom error handling for different errors
@@ -55,7 +61,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  if (userError) {
+  if (isAuthenticated && userError) {
     return (
       <div className="text-red-500 font-semibold text-base">
         Error loading user details: {userError}
@@ -224,7 +230,8 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
                   selectedSize={selectedSize ?? product.sizes[0]}
                   addToCart={addToCart}
                   user={user!}
-                  loading={loading || userLoading || cartLoading}
+                  isAuthenticated={isAuthenticated}
+                  loading={cartLoading}
                 />
 
                 {/* Checkout button  */}
@@ -331,16 +338,24 @@ const AddToCartButton = ({
   addToCart,
   user,
   loading,
+  isAuthenticated,
 }: {
   product: Product;
   selectedSize: ProductSize;
   addToCart: (newCartItem: CartItem) => void;
-  user: User;
+  isAuthenticated: boolean;
+  user?: User;
   loading: boolean;
 }) => {
+  let userId;
+
+  if (isAuthenticated) {
+    userId = user?.id! as string;
+  }
+
   const cartItem = {
     cartItemId: uuidv4(),
-    userId: user?.id!,
+    userId: userId as string,
     productId: product.id,
     productName: product.productName,
     sellerName: product.sellerName,
@@ -352,7 +367,7 @@ const AddToCartButton = ({
   };
 
   const handleAddToCart = () => {
-    if (!user) {
+    if (!isAuthenticated) {
       alert("You need to log in to add items to the cart.");
       return;
     }
@@ -362,20 +377,22 @@ const AddToCartButton = ({
       return;
     }
 
-    console.log("Adding item to cart:", cartItem);
     addToCart(cartItem);
+    console.log("Added item to cart:", cartItem);
   };
 
   return (
     <button
       type="submit"
       onClick={handleAddToCart}
-      disabled={loading || !selectedSize}
+      disabled={!isAuthenticated}
       className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed"
     >
-      <ShoppingCart size={22} className="mr-2" />
-      Add to cart
-      {loading ? "Loading..." : "Add to cart"}
+      
+      {/* Add to cart */}
+      {/* {loading ? <Loader2 className="animate-spin" /> :  */}
+      <div className="flex justify-center items-center"><ShoppingCart size={22} className="mr-2" />  <p>Add to cart</p></div> 
+      {/* } */}
     </button>
   );
 };

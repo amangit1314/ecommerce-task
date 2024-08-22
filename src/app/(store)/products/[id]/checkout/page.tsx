@@ -208,7 +208,7 @@ const PlaceOrderButton = ({
         throw new Error("User is not authenticated.");
       }
 
-      const response = await fetch("/api/orders", {
+      const response = await fetch("api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -239,7 +239,6 @@ const PlaceOrderButton = ({
 
       const data = await response.json();
 
-      // Update state or navigate as needed
       setLoading(false);
       toast.success("Order placed successfully!");
       router.push(`/profile/${user.id}/orders`);
@@ -483,7 +482,6 @@ const PaymentOptionCard = () => {
           Cash on delivery
         </span>
       </label>
-      {/* Add more payment options as needed */}
     </div>
   );
 };

@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 
 export const POST = async (request: Request) => {
   try {
+    const reqBody = await request.json();
     const {
       userId,
       shippingAddress,
@@ -22,11 +23,13 @@ export const POST = async (request: Request) => {
       paymentMethod,
       orderItems,
       orderTotalPrice,
-    } = await request.json();
+    } = reqBody;
 
     if (!userId || !orderItems || orderItems.length === 0) {
       return NextResponse.json({ message: "Invalid data" }, { status: 400 });
     }
+
+    console.log("Received order data: ", reqBody);
 
     // Create the order first
     const order = await db.order.create({

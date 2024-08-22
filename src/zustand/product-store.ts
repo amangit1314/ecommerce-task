@@ -30,7 +30,6 @@ export const useProductStore = create<ProductState & ProductActions>()(
       selectedSize: null, // Initialize selectedSize as null
 
       fetchProductDetails: async (productId: string) => {
-        const state = get();
         try {
           set({ loading: true });
           const response = await fetch(`/api/products/${productId}`);

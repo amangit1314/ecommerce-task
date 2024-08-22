@@ -1,10 +1,12 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (
+  req: Request,
+  { params }: { params: { userId: string } }
+) => {
   try {
-    const reqBody = await req.json();
-    const userId = reqBody;
+    const userId = params?.userId!;
 
     if (!userId) {
       return NextResponse.json(

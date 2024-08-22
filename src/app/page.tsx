@@ -6,6 +6,7 @@ import { Abril_Fatface } from "next/font/google";
 import { Header } from "@/components/header";
 import { useProductsStore } from "@/zustand/products-store";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const abrilFatface = Abril_Fatface({
   weight: ["400"],
@@ -286,11 +287,12 @@ export default function Home() {
   }, [fetchProducts]);
 
   if (loading) {
-    return (
-      <div className="text-yellow-500 font-semibold text-base">
-        Loading ⏳ ...
-      </div>
-    );
+    toast.loading('Loading products ⏳ ...');
+    // return (
+    //   <div className="text-yellow-500 font-semibold text-base">
+    //     Loading ⏳ ...
+    //   </div>
+    // );
   }
 
   if (error) {
@@ -304,6 +306,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between space-y-10 px-12 pb-12">
       <Header />
+      
 
       <div className="space-y-5 max-w-screen w-full">
         <h1 className="text-4xl font-extrabold tracking-tighter">Store</h1>
@@ -314,7 +317,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="grid grid-cols-5 gap-4 max-w-screen w-full mx-15">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-screen w-full mx-15">
         {products.map((product) => (
           <div key={product.id}>
             <ProductCard2 product={product} />

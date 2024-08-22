@@ -23,7 +23,7 @@ export const useProductsStore = create<ProductsState & ProductsActions>()(
         const state = get();
         try {
           set({ loading: true });
-          const response = await fetch(`/api/products`);
+          const response = await fetch(`api/products`);
           if (!response.ok) {
             console.log(`Failed to fetch products: ${response.statusText}`);
             set({
@@ -46,7 +46,7 @@ export const useProductsStore = create<ProductsState & ProductsActions>()(
             products: [...state.products, ...uniqueProducts],
           });
 
-          console.log("Unique products added to the store:", uniqueProducts);
+          // console.log("Unique products added to the store:", uniqueProducts);
         } catch (error: any) {
           console.error(
             "Error fetching products in catch block:",

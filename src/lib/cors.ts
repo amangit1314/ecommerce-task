@@ -3,7 +3,7 @@ import Cors from "cors";
 // Initialize the cors middleware
 const cors = Cors({
   methods: ["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"],
-  origin: ["http://localhost:3000"], // Add your allowed origin here
+  origin: ["http://localhost:3000", "https://ecommerce-task-fl05bmdzv-gitaman8481s-projects.vercel.app/"], // Add your allowed origin here
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 });

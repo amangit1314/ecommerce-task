@@ -1,6 +1,5 @@
 import React from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type ProductSize = {
@@ -42,16 +41,10 @@ const ProductAverageStarRatings = ({ product }: { product: Product }) => {
           ))}
         </div>
 
+        {/* out of 5 stars text */}
         <p className="ml-2 dark:text-gray-300">
           {product.productRating} out of 5 stars
         </p>
-
-        {/* <Link
-          href={``}
-          className="ml-3 text-sm font-medium text-orange-600 hover:text-orange-500"
-        >
-          {reviews.totalCount} reviews
-        </Link> */}
       </div>
     </div>
   );

@@ -19,12 +19,10 @@ type UserActions = {
   // fetchUser: () => Promise<void>;
   fetchUserOrders: (userId: string) => Promise<void>;
   placeOrder: (
-    userId: string,
     product: Product,
     selectedProductSize: ProductSize,
     shippingAddress: string,
     mobileNumber: string,
-    email: string,
     paymentMethod: string,
     totalPrice: number,
     totalQuantity: number
@@ -39,38 +37,6 @@ export const useUserStore = create<UserState & UserActions>()(
       user: null,
       orders: [],
       isAuthenticated: false,
-      // fetchUser: async () => {
-      //   try {
-      //     set({ loading: true });
-      //     const response = await fetch("/api/auth/login", {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //       body: JSON.stringify({ email, password }),
-      //     });
-
-      //     if (!response.ok) {
-      //       throw new Error(`Login failed: ${response.statusText}`);
-      //     }
-
-      //     const data = await response.json();
-      //     set({
-      //       loading: false,
-      //       user: data.user,
-      //       isAuthenticated: true,
-      //       error: "",
-      //     });
-      //   } catch (error) {
-      //     console.error("Login error:", error);
-      //     set({
-      //       loading: false,
-      //       error: "Failed to login. Please check your credentials.",
-      //       user: null,
-      //       isAuthenticated: false,
-      //     });
-      //   }
-      // },
       register: async (email: string, password: string) => {
         try {
           set({
@@ -144,9 +110,8 @@ export const useUserStore = create<UserState & UserActions>()(
       fetchUserOrders: async (userId: string) => {
         try {
           set({ loading: true });
-          const response = await fetch("/api/orders/user/${userId}", {
+          const response = await fetch(`/api/orders/user/${userId}`, {
             method: "GET",
-            body: JSON.stringify({ userId }),
           });
 
           if (!response.ok) {
@@ -160,32 +125,32 @@ export const useUserStore = create<UserState & UserActions>()(
           set({ loading: false, error: "Failed to fetch orders.", orders: [] });
         }
       },
+
       placeOrder: async (
-        userId: string,
         product: Product,
         selectedProductSize: ProductSize,
         shippingAddress: string,
         mobileNumber: string,
-        email: string,
+
         paymentMethod: string,
         totalPrice: number,
         totalQuantity: number
       ) => {
         set({ loading: true });
-      
+
         try {
-          if (!get().user) {
-            throw new Error("User is not authenticated.");
+          if (!get().isAuthenticated) {
+            set({ error: `User is not authenticated` });
           }
-      
+
           const response = await fetch("/api/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              userId: userId,
+              userId: get().user?.id! as string,
               shippingAddress,
               mobileNumber,
-              email,
+              email: get().user?.email! as string,
               paymentMethod,
               orderItems: [
                 {
@@ -196,33 +161,33 @@ export const useUserStore = create<UserState & UserActions>()(
                   selectedSize: selectedProductSize,
                   totalPrice: totalPrice,
                   quantity: totalQuantity,
-                  selectedProductSize: selectedProductSize, // Ensure this field matches schema
+                  selectedProductSize: selectedProductSize,
                 },
               ],
-              orderTotalPrice: totalPrice, // Send total price for the entire order
+              orderTotalPrice: totalPrice,
             }),
           });
-      
+
           if (!response.ok) {
-            throw new Error(`Failed to place order: ${response.statusText}`);
+            set({
+              error: `Failed to place order: ${response.statusText}`,
+            });
           }
-      
+
           const data = await response.json();
-      
+
           // Assuming data.order contains the newly created order
           set((state) => ({
-            orders: [...state.orders, data.data], // Update this line based on actual response structure
+            orders: [...state.orders, data?.data! as Order],
+            error: "",
           }));
-      
-          
         } catch (error) {
           console.error("Place single product order error:", error);
-          set({ error: "Failed to place order", loading: false });
+          set({ error: `Failed to place order, Error: ${error}` });
         } finally {
           set({ loading: false });
         }
-      }
-      
+      },
     }),
     {
       name: "ecommerce-task-user-store",

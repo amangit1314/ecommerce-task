@@ -202,7 +202,7 @@ export const useCartStore = create<CartState & CartActions>()(
             throw new Error("Cart is empty.");
           }
 
-          const response = await fetch("/api/profile/orders/cart", {
+          const response = await fetch("api/profile/orders/cart", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

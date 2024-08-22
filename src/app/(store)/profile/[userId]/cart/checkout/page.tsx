@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useState } from "react";
@@ -7,6 +8,7 @@ import { CartItem } from "@/types/cart-item";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/zustand/user-store";
 import { Header } from "@/components/header";
+import { useRouter } from "next/navigation";
 
 type Address = {
   id: any;
@@ -19,10 +21,11 @@ const CartCheckoutPage = () => {
   const { cartItems, clearCart, placeOrder } = useCartStore();
   const { isAuthenticated, user } = useUserStore();
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-  const [isAddingAddress, setIsAddingAddress] = useState(false); // State to toggle the form
+  const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [selectedPaymentOption, setSelectedPaymentOption] = useState<
     string | null
   >(null);
+  const router = useRouter();
 
   const deliveryAddresses = [
     {
@@ -54,6 +57,7 @@ const CartCheckoutPage = () => {
 
       toast.success("Order placed successfully!");
       clearCart(); // Clear the cart after order placement
+      router.push('/');
     } else {
       toast.error("Please select a delivery address and payment method.");
     }
@@ -223,32 +227,6 @@ const CartCheckoutPage = () => {
 
 export default CartCheckoutPage;
 
-const steps = ["Cart", "Delivery", "Payment", "Review", "Complete"];
-
-const CheckoutStepper = () => {
-  return (
-    <div className="flex justify-between items-center">
-      {steps.map((step, index) => (
-        <div key={index} className="flex items-center space-x-2">
-          <div
-            className={`h-8 w-8 rounded-full flex items-center justify-center ${
-              index === steps.length - 1 ? "bg-red-600" : "bg-gray-300"
-            } text-white`}
-          >
-            {index + 1}
-          </div>
-          <span className="font-medium text-gray-900 dark:text-white">
-            {step}
-          </span>
-          {index < steps.length - 1 && (
-            <div className="w-8 border-t-2 border-gray-300"></div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-};
-
 const AddDeliveryAddressForm = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -256,7 +234,7 @@ const AddDeliveryAddressForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Logic to add the address
+    // TODO: Logic to add the address
     console.log("Address added:", { name, address, phone });
     setName("");
     setAddress("");
@@ -305,33 +283,6 @@ const AddDeliveryAddressForm = () => {
         Add Address
       </button>
     </form>
-  );
-};
-
-const PaymentOptionCard = ({
-  title,
-  description,
-  selected,
-  setSelectedPaymentOption,
-}: {
-  title: string;
-  description: string;
-  selected: boolean;
-  setSelectedPaymentOption: (
-    value: React.SetStateAction<string | null>
-  ) => void;
-}) => {
-  return (
-    <button
-      onClick={() => setSelectedPaymentOption("Cash on Delivery")}
-      className={cn(
-        `p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-red-500`,
-        selected ? `border-red-500` : ""
-      )}
-    >
-      <h4 className="font-medium text-gray-900 dark:text-white">{title}</h4>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
-    </button>
   );
 };
 
@@ -385,5 +336,60 @@ const CheckoutSummary = ({
         </div>
       </div>
     </div>
+  );
+};
+
+// -------------------------------------------------------------------
+
+const steps = ["Cart", "Delivery", "Payment", "Review", "Complete"];
+
+const CheckoutStepper = () => {
+  return (
+    <div className="flex justify-between items-center">
+      {steps.map((step, index) => (
+        <div key={index} className="flex items-center space-x-2">
+          <div
+            className={`h-8 w-8 rounded-full flex items-center justify-center ${
+              index === steps.length - 1 ? "bg-red-600" : "bg-gray-300"
+            } text-white`}
+          >
+            {index + 1}
+          </div>
+          <span className="font-medium text-gray-900 dark:text-white">
+            {step}
+          </span>
+          {index < steps.length - 1 && (
+            <div className="w-8 border-t-2 border-gray-300"></div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const PaymentOptionCard = ({
+  title,
+  description,
+  selected,
+  setSelectedPaymentOption,
+}: {
+  title: string;
+  description: string;
+  selected: boolean;
+  setSelectedPaymentOption: (
+    value: React.SetStateAction<string | null>
+  ) => void;
+}) => {
+  return (
+    <button
+      onClick={() => setSelectedPaymentOption("Cash on Delivery")}
+      className={cn(
+        `p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-red-500`,
+        selected ? `border-red-500` : ""
+      )}
+    >
+      <h4 className="font-medium text-gray-900 dark:text-white">{title}</h4>
+      <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+    </button>
   );
 };

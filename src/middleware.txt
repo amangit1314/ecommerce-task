@@ -1,0 +1,19 @@
+import { redirect } from "next/navigation";
+
+const publicRoutes = createRouteMatcher([
+  "/",
+  "/login",
+  "/register",
+  "/products/:productId",
+]);
+const isRouteAuthenticatedUserMustNotVisit = createRouteMatcher([
+  "/",
+  "/login",
+  "/register",
+]);
+const isProtectedRoute = createRouteMatcher(["/checkout(.*)", "/orders(.*)"]);
+
+
+export const config = {
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+};
