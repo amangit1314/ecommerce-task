@@ -11,10 +11,12 @@ export async function OPTIONS(req: NextRequest) {
 export const dynamic = "force-dynamic";
 
 // GET request to fetch details of a specific order by orderId
-export const GET = async (req: Request) => {
+export const GET = async (
+  req: Request,
+  { params }: { params: { orderId: string } }
+) => {
   try {
-    const url = new URL(req.url);
-    const orderId = url.searchParams.get("orderId");
+    const orderId = params?.orderId!;
 
     if (!orderId) {
       return NextResponse.json(
@@ -48,13 +50,13 @@ export const GET = async (req: Request) => {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Error fetching order details:", error);
+  } catch (error: any) {
+    console.error("Error fetching order details:", error.message);
     return NextResponse.json(
       {
         success: false,
         status: "ERROR",
-        error: error,
+        error: error.message,
         message: "Failed to fetch order details, INTERNAL SERVER ERROR",
       },
       { status: 500 }

@@ -15,7 +15,6 @@ interface ProductState {
 
 type ProductActions = {
   fetchProductDetails: (productId: string) => Promise<void>;
-
   changeQuantity: (productId: string, quantity: number) => void;
   setSelectedSize: (size: ProductSize) => void;
   placeOrder: (
@@ -77,7 +76,7 @@ export const useProductStore = create<ProductState & ProductActions>()(
         const updatedCart = state.cart.map((item) =>
           item.productId === productId ? { ...item, quantity } : item
         );
-        set({ cart: updatedCart });
+        set({ cart: updatedCart, loading: false });
       },
       setSelectedSize: (size: ProductSize) => {
         set({ selectedSize: size });
@@ -89,22 +88,25 @@ export const useProductStore = create<ProductState & ProductActions>()(
         email: string,
         paymentMethod: string
       ) => {
-        set({ loading: true });
+ 
 
         try {
+          set({ loading: true });
+
           const { productDetails, selectedSize, selectedQuantity } = get();
 
-          if (!productDetails) {
-            throw new Error("No product selected for ordering.");
+          if (!productDetails || productDetails == null) {
+            set({ error: "No product selected for ordering." });
           }
 
           const orderItem = {
-            productId: productDetails.id,
-            productName: productDetails.productName,
-            sellerName: productDetails.sellerName,
-            selectedSize: selectedSize,
-            quantity: selectedQuantity,
-            totalPrice: productDetails.productPrice,
+            productId: productDetails?.id!,
+            productName: productDetails?.productName! as string,
+            productImageLink: productDetails?.productImageLink! as string,
+            sellerName: productDetails?.sellerName! as string,
+            selectedSize: selectedSize ?? productDetails?.sizes[0],
+            quantity: selectedQuantity ?? 1,
+            totalPrice: productDetails?.productPrice!,
           };
 
           const response = await fetch("/api/orders", {
@@ -123,7 +125,7 @@ export const useProductStore = create<ProductState & ProductActions>()(
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to place order: ${response.statusText}`);
+            set({ error: `Failed to place order: ${response.statusText}` });
           }
 
           const data = await response.json();

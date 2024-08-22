@@ -43,7 +43,7 @@ const CartCheckoutPage = () => {
     if (isAuthenticated && selectedAddress) {
       placeOrder(
         user?.id!,
-        selectedAddress.name,
+        selectedAddress.address,
         selectedAddress.phone,
         user?.email!,
         "Cash on Delivery"

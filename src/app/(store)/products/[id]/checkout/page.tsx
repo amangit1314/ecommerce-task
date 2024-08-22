@@ -208,7 +208,7 @@ const PlaceOrderButton = ({
         throw new Error("User is not authenticated.");
       }
 
-      const response = await fetch("api/orders", {
+      const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -219,6 +219,7 @@ const PlaceOrderButton = ({
           paymentMethod: "Cash on delivery", // Update as needed
           orderItems: [
             {
+              productId: product.id,
               productName: product.productName,
               productImage: product.productImageLink,
               productPrice: product.productPrice,

@@ -63,11 +63,11 @@ export const CartItemCard = ({ cartItem }: { cartItem: CartItem }) => {
             </button>
           </div>
         </div>
-      </div>
+      </div>ss
 
       {/* button to remove cartItem */}
       <div>
-        <p className="text-lg font-semibold">
+        <p className="text-lg font-semibold text-red-500">
           ${cartItem.totalPrice.toFixed(2)}
         </p>
         <button

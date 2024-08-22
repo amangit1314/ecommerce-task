@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { OrderItem, PrismaClient } from '@prisma/client';
+import { CartItem } from '@/types/cart-item';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +16,7 @@ export async function POST(request: Request) {
       orderTotalPrice, 
     } = await request.json();
 
-    if (!userId || !cartItems || cartItems.length === 0) {
+    if (!userId || !cartItems || cartItems.length === 0 || !orderTotalPrice) {
       return NextResponse.json({ message: 'Invalid data' }, { status: 400 });
     }
 
@@ -29,10 +30,10 @@ export async function POST(request: Request) {
         paymentMethod,
         totalPrice: orderTotalPrice, 
         orderItems: {
-          create: cartItems.map((item: any) => ({
-            selectedSize: item.selectedSize,
+          create: cartItems.map((item: CartItem) => ({
+            selectedSize: item.selectedProductSize,
             totalPrice: item.totalPrice,
-            quantity: item.quantity,
+            quantity: item.totalQuantity,
             product: {
               connect: { id: item.productId },
             },

@@ -37,20 +37,8 @@ import {
 } from "@/components/ui/table";
 import toast, { Toaster } from "react-hot-toast";
 import { useUserStore } from "@/zustand/user-store";
-import { OrderItem } from "@prisma/client";
-
-type Order = {
-  id: string;
-  userId: string | null;
-  shippingAddress: string;
-  mobileNumber: string;
-  email: string;
-  paymentMethod: string;
-  totalPrice: number;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  orderItems?: OrderItem[]; // Make orderItems optional
-};
+import { Order, OrderItem } from "@prisma/client";
+import Link from "next/link";
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -78,51 +66,32 @@ export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "id",
     header: "Order Id",
-    cell: ({ row }) => {
-      const createdAt = new Date(row.getValue("id"));
-      return <div>{createdAt.toLocaleDateString()}</div>;
-    },
+    cell: ({ row }) => <div className="">{row.getValue("id")}</div>,
   },
-  {
-    accessorKey: "userId",
-    header: "User Id",
-    cell: ({ row }) => {
-      const createdAt = new Date(row.getValue("userId"));
-      return <div>{createdAt.toLocaleDateString()}</div>;
-    },
-  },
+  // {
+  //   accessorKey: "userId",
+  //   header: "User Id",
+  //   cell: ({ row }) => <div  className="line-clamp-1 text-ellipsis">{row.getValue("userId")}</div>,
+  // },
   {
     accessorKey: "shippingAddress",
     header: "Shipping Address",
-    cell: ({ row }) => {
-      const createdAt = new Date(row.getValue("shippingAddress"));
-      return <div>{createdAt.toLocaleDateString()}</div>;
-    },
+    cell: ({ row }) => <div>{row.getValue("shippingAddress")}</div>,
   },
   {
     accessorKey: "mobileNumber",
     header: "Mobile Number",
-    cell: ({ row }) => {
-      const createdAt = new Date(row.getValue("mobileNumber"));
-      return <div>{createdAt.toLocaleDateString()}</div>;
-    },
+    cell: ({ row }) => <div>{row.getValue("mobileNumber")}</div>,
   },
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => {
-      const createdAt = new Date(row.getValue("email"));
-      return <div>{createdAt.toLocaleDateString()}</div>;
-    },
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
-
   {
     accessorKey: "paymentMethod",
     header: "Payment Method",
-    cell: ({ row }) => {
-      const createdAt = new Date(row.getValue("paymentMethod"));
-      return <div>{createdAt.toLocaleDateString()}</div>;
-    },
+    cell: ({ row }) => <div>{row.getValue("paymentMethod")}</div>,
   },
   {
     accessorKey: "totalPrice",
@@ -148,15 +117,6 @@ export const columns: ColumnDef<Order>[] = [
     },
   },
   {
-    accessorKey: "orderItems",
-    header: "Order Date",
-    cell: ({ row }) => {
-      const createdAt = new Date(row.getValue("orderItems"));
-      return <div>{createdAt.toLocaleDateString()}</div>;
-    },
-  },
-
-  {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
@@ -174,11 +134,18 @@ export const columns: ColumnDef<Order>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(order.id)}
+              className="cursor-pointer"
             >
               Copy order ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View order details</DropdownMenuItem>
+
+            <Link
+              href={`/profile/${order.userId}/orders/${order.id}`}
+              className="cursor-pointer"
+            >
+              <DropdownMenuItem>View order details</DropdownMenuItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -186,8 +153,7 @@ export const columns: ColumnDef<Order>[] = [
   },
 ];
 
-export function OrderTable() {
-  // const [orders, setOrders] = React.useState<Order[]>([]);
+export function OrderTable({ orders }: { orders: Order[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -195,13 +161,6 @@ export function OrderTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-
-  const { user, fetchUserOrders, orders } = useUserStore();
-  const userId = user?.id!;
-
-  React.useEffect(() => {
-    fetchUserOrders(userId);
-  }, [userId, fetchUserOrders]);
 
   const table = useReactTable({
     data: orders,
@@ -227,6 +186,7 @@ export function OrderTable() {
       <Toaster />
 
       <div className="flex items-center py-4">
+        {/* search bar input */}
         <Input
           placeholder="Filter orders..."
           value={
@@ -237,6 +197,8 @@ export function OrderTable() {
           }
           className="max-w-sm"
         />
+
+        {/* columns dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -264,8 +226,11 @@ export function OrderTable() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* table */}
       <div className="rounded-md border">
         <Table>
+          {/* headers column names */}
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -284,6 +249,8 @@ export function OrderTable() {
               </TableRow>
             ))}
           </TableHeader>
+
+          {/* table body or data */}
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
@@ -314,6 +281,8 @@ export function OrderTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* selected rows and previous next buttons */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

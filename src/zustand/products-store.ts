@@ -23,7 +23,7 @@ export const useProductsStore = create<ProductsState & ProductsActions>()(
         const state = get();
         try {
           set({ loading: true });
-          const response = await fetch(`api/products`);
+          const response = await fetch(`/api/products`);
           if (!response.ok) {
             console.log(`Failed to fetch products: ${response.statusText}`);
             set({

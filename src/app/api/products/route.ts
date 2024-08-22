@@ -13,7 +13,7 @@ export const GET = async (req: Request) => {
     // Parse the JSON data
     const products = JSON.parse(fileContents);
 
-    console.log("Products from json file: ", products);
+    // console.log("Products from json file: ", products);
 
     // Return the products in the response
     return NextResponse.json(

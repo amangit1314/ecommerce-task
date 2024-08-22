@@ -17,7 +17,6 @@ model User {
   id                        String    @id @default(uuid())
   email                     String    @unique
   password                  String
-  token                     String?
   accessToken               String?
   accessTokenExpiry         String?
   accessTokenStatus         String?
@@ -51,12 +50,13 @@ model OrderItem {
   orderId             String
   productId           String
   productName         String
+  productImageLink    String
   selectedSize        String
   totalPrice          Float?
   quantity            Int
   sellerName          String
   selectedProductSize String
-  order               Order?  @relation(fields: [orderId], references: [id])
+  order               Order? @relation(fields: [orderId], references: [id])
 
   @@index([orderId])
 }

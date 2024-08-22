@@ -304,7 +304,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between space-y-10 px-12 pb-12">
+    <div className="flex min-h-screen flex-col items-center justify-between space-y-10 px-12 pb-12">
       <Header />
       
 
@@ -324,7 +324,7 @@ export default function Home() {
           </div>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
 
@@ -360,7 +360,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
 const ProductCard2 = ({ product }: { product: Product }) => {
   return (
-    <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
       <Link href={`/products/${product.id}`}>
         <Image
           src={
@@ -456,7 +456,7 @@ const ProductCard2 = ({ product }: { product: Product }) => {
           {/* <p className="text-lg font-bold text-gray-900 dark:text-white">
           <span className="line-through"> $399,99 </span>
         </p> */}
-          <p className="text-lg font-bold leading-tight text-white mt-2">
+          <p className="text-lg font-bold leading-tight text-red-500 mt-2">
             ${product.productPrice}
           </p>
         </div>

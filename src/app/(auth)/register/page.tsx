@@ -79,7 +79,7 @@ export default function Register() {
           </div>
         </form>
       </div>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden max-h-screen h-full overflow-y-hidden bg-muted lg:block">
         <Image
           src="https://www.shutterstock.com/image-vector/3d-fingerprint-cyber-secure-icon-600nw-2145772287.jpg"
           alt="Image"

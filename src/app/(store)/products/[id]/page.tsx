@@ -21,6 +21,69 @@ import { CartItem } from "@/types/cart-item";
 import toast, { Toaster } from "react-hot-toast";
 
 const ProductPage = ({ params }: { params: { id: string } }) => {
+  // const productId = params?.id!;
+  // const { productDetails, fetchProductDetails, loading, error } =
+  //   useProductStore();
+  // const {
+  //   user,
+  //   loading: userLoading,
+  //   error: userError,
+  //   isAuthenticated,
+  // } = useUserStore();
+  // const [showFullDescription, setShowFullDescription] = useState(false);
+  // const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null);
+
+  // useEffect(() => {
+  //   fetchProductDetails(productId);
+  // }, [productId, fetchProductDetails]);
+
+  // if (loading) {
+  //   return (
+  //     <div className="text-yellow-500 font-semibold text-base">
+  //       Loading Product Details⏳ ...
+  //     </div>
+  //   );
+  // }
+
+  // if (isAuthenticated && userLoading) {
+  //   return (
+  //     <div className="text-yellow-500 font-semibold text-base">
+  //       Loading User Details⏳ ...
+  //     </div>
+  //   );
+  // }
+
+  // if (error) {
+  //   return (
+  //     <div className="text-red-500 font-semibold text-base">
+  //       Error loading product details: {error}
+  //     </div>
+  //   );
+  // }
+
+  // if (isAuthenticated && userError) {
+  //   return (
+  //     <div className="text-red-500 font-semibold text-base">
+  //       Error loading user details: {userError}
+  //     </div>
+  //   );
+  // }
+
+  // const product = productDetails;
+
+  // if (!product) {
+  //   return (
+  //     <div className="text-red-500 font-semibold text-base">
+  //       No product found ...
+  //     </div>
+  //   );
+  // }
+
+  // // Set selectedSize to the first available size if not already set
+  // if (!selectedSize) {
+  //   setSelectedSize(product.sizes[0]);
+  // }
+
   const productId = params?.id!;
   const { productDetails, fetchProductDetails, loading, error } =
     useProductStore();
@@ -37,19 +100,15 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
     fetchProductDetails(productId);
   }, [productId, fetchProductDetails]);
 
-  if (loading) {
-    return (
-      <div className="text-yellow-500 font-semibold text-base">
-        Loading Product Details⏳ ...
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (productDetails && !selectedSize) {
+      setSelectedSize(productDetails.sizes[0]);
+    }
+  }, [productDetails, selectedSize]);
 
-  if (isAuthenticated && userLoading) {
+  if (loading || userLoading) {
     return (
-      <div className="text-yellow-500 font-semibold text-base">
-        Loading User Details⏳ ...
-      </div>
+      <div className="text-yellow-500 font-semibold text-base">Loading...</div>
     );
   }
 
@@ -61,7 +120,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  if (isAuthenticated && userError) {
+  if (userError) {
     return (
       <div className="text-red-500 font-semibold text-base">
         Error loading user details: {userError}
@@ -77,11 +136,6 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
         No product found ...
       </div>
     );
-  }
-
-  // Set selectedSize to the first available size if not already set
-  if (!selectedSize) {
-    setSelectedSize(product.sizes[0]);
   }
 
   return (
@@ -370,7 +424,7 @@ const AddToCartButton = ({
       <button
         type="button"
         onClick={handleAddToCart}
-        disabled={loading || !isAuthenticated || !selectedSize}
+        disabled={!isAuthenticated || !selectedSize}
         className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed"
       >
         {loading ? (
@@ -400,9 +454,8 @@ const CheckoutButton = ({
   const onClick = () => {
     if (!isAuthenticated) {
       alert("You are not logged in, log in to checkout ...");
-    } else {
-      router.push(`/products/${product.id}/checkout`);
     }
+    router.push(`/products/${product.id}/checkout`);
   };
 
   return (
